@@ -5,8 +5,13 @@ const app = express();
 app.use(express.json());
 
 morgan.token("body", function (req, res) {
-  return JSON.stringify(req.body);
+  if (req.method === "POST") {
+    return JSON.stringify(req.body);
+  } else {
+    return "";
+  }
 });
+
 app.use(
   morgan(":method :url :status :res[content-length] - :response-time ms :body")
 );
