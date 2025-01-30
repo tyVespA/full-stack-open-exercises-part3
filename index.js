@@ -10,7 +10,7 @@ app.use(cors());
 
 //
 
-morgan.token("body", function (req, res) {
+morgan.token("body", function (req) {
   if (req.method === "POST") {
     return JSON.stringify(req.body);
   } else {
@@ -42,7 +42,7 @@ app.get("/api/people/:id", (req, res, next) => {
 
 app.delete("/api/people/:id", (req, res, next) => {
   Person.findByIdAndDelete(req.params.id)
-    .then((result) => {
+    .then(() => {
       res.status(204).end();
     })
     .catch((error) => next(error));
@@ -101,7 +101,7 @@ const unknownEndpoint = (request, response) => {
 const errorHandler = (error, req, res, next) => {
   console.error(error.message);
   if (error.name === "CastError") {
-    return response.status(400).send({ error: "malformatted id" });
+    return res.status(400).send({ error: "malformatted id" });
   }
   next(error);
 };
