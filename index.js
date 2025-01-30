@@ -2,7 +2,6 @@ const express = require("express");
 var morgan = require("morgan");
 const app = express();
 const cors = require("cors");
-const path = require("path");
 app.use(express.static("dist"));
 
 app.use(express.json());
@@ -101,10 +100,6 @@ app.get("/info", (req, res) => {
     <p>${date}</p>
     `
   );
-});
-
-app.get("*", (request, response) => {
-  response.sendFile(path.join(__dirname, "dist", "index.html"));
 });
 
 const PORT = process.env.PORT || 3001;
