@@ -5,7 +5,6 @@ var morgan = require("morgan");
 const app = express();
 const cors = require("cors");
 app.use(express.static("dist"));
-
 app.use(express.json());
 app.use(cors());
 
@@ -29,10 +28,16 @@ app.get("/api/people", (request, response) => {
   });
 });
 
-app.get("/api/people/:id", (req, res) => {
-  Person.findById(request.params.id).then((person) => {
-    response.json(person);
-  });
+app.get("/api/people/:id", (req, res, next) => {
+  Person.findById(req.params.id)
+    .then((person) => {
+      if (person) {
+        res.json(person);
+      } else {
+        res.status(404).end();
+      }
+    })
+    .catch((error) => next(error));
 });
 
 app.delete("/api/people/:id", (req, res, next) => {
@@ -88,6 +93,21 @@ app.get("/info", (req, res) => {
     `
   );
 });
+
+const unknownEndpoint = (request, response) => {
+  response.status(404).send({ error: "unknown endpoint" });
+};
+
+const errorHandler = (error, req, res, next) => {
+  console.error(error.message);
+  if (error.name === "CastError") {
+    return response.status(400).send({ error: "malformatted id" });
+  }
+  next(error);
+};
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, () => {
