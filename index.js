@@ -35,10 +35,12 @@ app.get("/api/people/:id", (req, res) => {
   });
 });
 
-app.delete("/api/people/:id", (req, res) => {
-  const id = req.params.id;
-  people = people.filter((person) => person.id !== id);
-  res.status(204).end();
+app.delete("/api/people/:id", (req, res, next) => {
+  Person.findByIdAndDelete(req.params.id)
+    .then((result) => {
+      res.status(204).end();
+    })
+    .catch((error) => next(error));
 });
 
 app.post("/api/people", async (req, res) => {
