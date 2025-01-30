@@ -86,12 +86,12 @@ app.post("/api/people", async (req, res) => {
 
 app.get("/info", (req, res) => {
   const date = new Date();
-  res.send(
-    `
-    <p>Phonebook has info for ${people.length} people</p>
-    <p>${date}</p>
-    `
-  );
+  Person.countDocuments({}).then((count) => {
+    res.send(`
+        <p>Phonebook has info for ${count} people</p>
+        <p>${date}</p>
+      `);
+  });
 });
 
 const unknownEndpoint = (request, response) => {
